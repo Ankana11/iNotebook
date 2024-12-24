@@ -5,7 +5,7 @@ const Notes = () => {
     const context = useContext(noteContext);
 const {note, setNote} = context;
   return (
-    <div className='row my-3'>
+    <div className='row'>
        <h4>Your Note</h4>
       {note.map((note)=>{
         return <Noteitem note={note}/>;
