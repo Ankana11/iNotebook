@@ -8,10 +8,15 @@ const AddNotes = () => {
     const {addNote} = context;
     const [note , setNote] = useState({title: "", description: "", tag: "default"});
 
-    const handleClick=(e)=>{
-        e.preventDefault();
-        addNote(note.title, note.description, note.tag);
-    }
+    const handleClick = (e) => {
+      e.preventDefault();
+      if (note.title.trim() === "" || note.description.trim() === "") {
+        alert("Title and Description are required!");
+        return;
+      }
+      addNote(note.title, note.description, note.tag);
+    };
+    
 
     const onChange= (e)=>{
     setNote({...note, [e.target.name]: e.target.value})

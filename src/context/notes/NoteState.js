@@ -56,31 +56,43 @@ const NoteState = (props) => {
 
 
   // Edit note
-  const editNote = async(id, title, description, tag) => {
-
-    //API call
-      const response = await fetch(`${host}/api/notes/updatenote/{$id}`, {
-      method: "POST",
-      headers:{
-      "Content-Type": "Application/json",
-      "auth-token" : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNjc1YzQ0ZmY2YjMwYzQ2NGUzN2IwYjczIn0sImlhdCI6MTczNDEwMDIzN30.VwS6U3dLbH_6PfeHDy1rr0EIqKRdmvsXWQiFIwpbYzA"
-      },
-      body: json.stringify({title, description, tag})
+  const editNote = async (id, title, description, tag) => {
+    try {
+      const response = await fetch(`${host}/api/notes/updatenote/${id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          "auth-token":
+            "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNjc1YzQ0ZmY2YjMwYzQ2NGUzN2IwYjczIn0sImlhdCI6MTczNDEwMDIzN30.VwS6U3dLbH_6PfeHDy1rr0EIqKRdmvsXWQiFIwpbYzA",
+        },
+        body: JSON.stringify({ title, description, tag }),
       });
-      const json=  response.json();
-      
-
-  for (let index = 0; index < note.length; index++) {
-    const element = note[index];
-    if(element._id === id){
-      element.title= title;
-      element.description= description;
-      element.tag= tag;
+  
+      if (!response.ok) {
+        throw new Error("Failed to update the note.");
+      }
+  
+      const json = await response.json();
+      console.log("Edited note response:", json);
+  
+      // Update the note in the state
+      let newNote = [...note];
+      for (let index = 0; index < newNote.length; index++) {
+        const element = newNote[index];
+        if (element._id === id) {
+          newNote[index].title = title;
+          newNote[index].description = description;
+          newNote[index].tag = tag;
+          break;
+        }
+      }
+      setNote(newNote);
+    } catch (error) {
+      console.error("Error updating note:", error);
     }
-    
-  }
   };
-
+  
+  
   // Delete note
   const deleteNote = async (id) => {
  
@@ -96,6 +108,8 @@ const NoteState = (props) => {
       const json=  response.json();
       console.log(json);
       const newNotes = note.filter((note) => note._id !== id);
+      setNote(newNotes);
+
   };
 
   return (

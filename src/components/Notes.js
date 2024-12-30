@@ -5,9 +5,9 @@ import AddNotes from "./AddNotes";
 
 const Notes = () => {
   const context = useContext(noteContext);
-  const { note, getnote } = context;
+  const { note, getnote, editNote } = context;
 
-  const [currentNote, setCurrentNote] = useState({ id: "", title: "", description: "", tag: "default" });
+  const [currentNote, setCurrentNote] = useState({ id: "", etitle: "", edescription: "", etag: "" });
 
   const ref = useRef(null);
   const refClose = useRef(null);
@@ -17,15 +17,16 @@ const Notes = () => {
   }, []);
 
   const updateNote = (currentNote) => {
-    setCurrentNote({ id: currentNote._id, title: currentNote.title, description: currentNote.description, tag: currentNote.tag });
+    setCurrentNote({ id: currentNote._id, etitle: currentNote.title, edescription: currentNote.description, etag: currentNote.tag });
     ref.current.click();
   };
 
   const handleClick = (e) => {
     e.preventDefault();
-    console.log("Updating the note:", currentNote);
+    editNote(currentNote.id, currentNote.etitle, currentNote.edescription, currentNote.etag);
     refClose.current.click();
   };
+  
 
   const onChange = (e) => {
     setCurrentNote({ ...currentNote, [e.target.name]: e.target.value });
@@ -58,7 +59,7 @@ const Notes = () => {
                     className="form-control"
                     id="etitle"
                     name="etitle"
-                    value={currentNote.title}
+                    value={currentNote.etitle}
                     onChange={onChange}
                   />
                 </div>
@@ -71,7 +72,7 @@ const Notes = () => {
                     className="form-control"
                     id="edescription"
                     name="edescription"
-                    value={currentNote.description}
+                    value={currentNote.edescription}
                     onChange={onChange}
                   />
                 </div>
@@ -84,7 +85,7 @@ const Notes = () => {
                     className="form-control"
                     id="etag"
                     name="etag"
-                    value={currentNote.tag}
+                    value={currentNote.etag}
                     onChange={onChange}
                   />
                 </div>
