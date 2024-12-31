@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { useNavigate } from "react-router-dom";
-const Login = () => {
+const Login = (props) => {
     const [credential, setCredential]= useState({email:"", password:""});
     let navigate  = useNavigate ();
     const handleSubmit= async (e)=>{
@@ -16,11 +16,12 @@ const Login = () => {
       console.log(json);
       if(json.success){
         // save
-localStorage.setItem('token', json.authtoken);
-navigate("/");
-
+        localStorage.setItem('token', json.authtoken);
+        props.showalert("Logged in Successfully", "success")
+        navigate("/");
+        console.log("Token received from login:", json.authtoken);
       }else{
-        alert("Invalid Credentials");
+        props.showalert("Invalid Credentials", "danger")
       }
     }
     const onChange = (e) => {
@@ -29,6 +30,7 @@ navigate("/");
       
   return (
     <div>
+      <h2>Login</h2>
     <form onSubmit={handleSubmit}>
   <div className="mb-3 mt-3">
     <label htmlFor="email" className="form-label">Email address</label>

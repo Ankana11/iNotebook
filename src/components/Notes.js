@@ -2,8 +2,10 @@ import { useContext, useEffect, useRef, useState } from "react";
 import noteContext from "../context/notes/noteContext.js";
 import Noteitem from "./Noteitem.js";
 import AddNotes from "./AddNotes";
-
-const Notes = () => {
+import { useNavigate } from "react-router-dom";
+const Notes = (props) => {
+  let navigate  = useNavigate ();
+  const {showalert} = props;
   const context = useContext(noteContext);
   const { note, getnote, editNote } = context;
 
@@ -12,9 +14,15 @@ const Notes = () => {
   const ref = useRef(null);
   const refClose = useRef(null);
   useEffect(() => {
-    getnote();
+    if(localStorage.getItem('token')){
+
+      getnote();
+    }else{
+      navigate("/login");
+    }
     // eslint-disable-next-line
   }, []);
+  console.log("Auth Token:", localStorage.getItem("token"));
 
   const updateNote = (currentNote) => {
     setCurrentNote({ id: currentNote._id, etitle: currentNote.title, edescription: currentNote.description, etag: currentNote.tag });
@@ -25,6 +33,8 @@ const Notes = () => {
     e.preventDefault();
     editNote(currentNote.id, currentNote.etitle, currentNote.edescription, currentNote.etag);
     refClose.current.click();
+    props.showalert("Edited Successfully", "success")
+
   };
   
 
@@ -34,7 +44,7 @@ const Notes = () => {
 
   return (
     <>
-      <AddNotes />
+      <AddNotes showalert={showalert}/>
    
       <button ref={ref} type="button" className="btn btn-primary d-none" data-bs-toggle="modal" data-bs-target="#exampleModal">
         Launch demo modal
@@ -107,9 +117,10 @@ const Notes = () => {
       <div className="row my-3">
         <h4>Your Notes</h4>
         {note.length === 0 && "No notes to display"}
-        {note.map((noteItem) => {
-          return <Noteitem key={noteItem._id} updateNote={updateNote} note={noteItem} />;
-        })}
+        {Array.isArray(note) && note.map((noteItem) => {
+  return <Noteitem key={noteItem._id} updateNote={updateNote} note={noteItem} showalert={showalert}/>;
+})}
+
       </div>
     </>
   );
